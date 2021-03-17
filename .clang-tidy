@@ -1,0 +1,7 @@
+---
+Checks:          '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-modernize-use-trailing-return-type,-llvm*,-cppcoreguidelines-avoid-non-const-global-variables,-clang-diagnostic-unused-const-variable,-cppcoreguidelines-pro-type-reinterpret-cast'
+WarningsAsErrors: '*'
+HeaderFilterRegex: ''
+FormatStyle:     none
+
+
