@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../lib/type_traits.h"
+#include <type_traits.h>
 
 template <class T, class U>
 inline constexpr bool is_same_v = std::is_same<T, U>::value;

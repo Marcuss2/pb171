@@ -1,7 +1,7 @@
 #pragma once
 #include "concepts.hpp"
 
-using vol_ptr = volatile unsigned char *const;
+using vol_ptr = volatile unsigned char* const;
 
 class DigitalPin {
     vol_ptr PIN_MODE_ADDR;
