@@ -31,7 +31,7 @@
 #ifndef _GLIBCXX_TYPE_TRAITS
 #define _GLIBCXX_TYPE_TRAITS 1
 
-//#include <stdlib.h>
+#include <stdlib.h>
 
 //#pragma GCC system_header
 
@@ -46,6 +46,7 @@ namespace std /*_GLIBCXX_VISIBILITY(default)*/
 {
 //_GLIBCXX_BEGIN_NAMESPACE_VERSION
 
+   typedef size_t size_t;
    typedef void* nullptr_t;
 
   /**
@@ -289,6 +290,9 @@ namespace std /*_GLIBCXX_VISIBILITY(default)*/
     struct is_array
     : public false_type { };
 
+  template<typename _Tp, std::size_t _Size>
+    struct is_array<_Tp[_Size]>
+    : public true_type { };
 
   template<typename _Tp>
     struct is_array<_Tp[]>
@@ -1238,8 +1242,42 @@ namespace std /*_GLIBCXX_VISIBILITY(default)*/
   // type property queries.
 
   /// alignment_of
+  template<typename _Tp>
+    struct alignment_of
+    : public integral_constant<std::size_t, __alignof__(_Tp)> { };
   
   /// rank
+  template<typename>
+    struct rank
+    : public integral_constant<std::size_t, 0> { };
+   
+  template<typename _Tp, std::size_t _Size>
+    struct rank<_Tp[_Size]>
+    : public integral_constant<std::size_t, 1 + rank<_Tp>::value> { };
+
+  template<typename _Tp>
+    struct rank<_Tp[]>
+    : public integral_constant<std::size_t, 1 + rank<_Tp>::value> { };
+
+  /// extent
+  template<typename, unsigned _Uint>
+    struct extent
+    : public integral_constant<std::size_t, 0> { };
+  
+  template<typename _Tp, unsigned _Uint, std::size_t _Size>
+    struct extent<_Tp[_Size], _Uint>
+    : public integral_constant<std::size_t,
+			       _Uint == 0 ? _Size : extent<_Tp,
+							   _Uint - 1>::value>
+    { };
+
+  template<typename _Tp, unsigned _Uint>
+    struct extent<_Tp[], _Uint>
+    : public integral_constant<std::size_t,
+			       _Uint == 0 ? 0 : extent<_Tp,
+						       _Uint - 1>::value>
+    { };
+
 
   // Type relations.
 
@@ -1594,6 +1632,9 @@ namespace std /*_GLIBCXX_VISIBILITY(default)*/
     struct remove_extent
     { typedef _Tp     type; };
 
+  template<typename _Tp, std::size_t _Size>
+    struct remove_extent<_Tp[_Size]>
+    { typedef _Tp     type; };
 
   template<typename _Tp>
     struct remove_extent<_Tp[]>
@@ -1604,6 +1645,9 @@ namespace std /*_GLIBCXX_VISIBILITY(default)*/
     struct remove_all_extents
     { typedef _Tp     type; };
 
+  template<typename _Tp, std::size_t _Size>
+    struct remove_all_extents<_Tp[_Size]>
+    { typedef typename remove_all_extents<_Tp>::type     type; };
 
   template<typename _Tp>
     struct remove_all_extents<_Tp[]>
@@ -1632,6 +1676,15 @@ namespace std /*_GLIBCXX_VISIBILITY(default)*/
     { typedef typename remove_reference<_Tp>::type*     type; };
 
 
+  template<std::size_t _Len>
+    struct __aligned_storage_msa
+    { 
+      union __type
+      {
+	unsigned char __data[_Len];
+	struct __attribute__((__aligned__)) { } __align; 
+      };
+    };
 
   /**
    *  @brief Alignment type.
@@ -1643,6 +1696,16 @@ namespace std /*_GLIBCXX_VISIBILITY(default)*/
    *  storage for any object whose size is at most _Len and whose
    *  alignment is a divisor of _Align.
   */
+  template<std::size_t _Len, std::size_t _Align =
+	   __alignof__(typename __aligned_storage_msa<_Len>::__type)>
+    struct aligned_storage
+    { 
+      union type
+      {
+	unsigned char __data[_Len];
+	struct __attribute__((__aligned__((_Align)))) { } __align; 
+      };
+    };
 
 
   // Decay trait for arrays and functions, used for perfect forwarding

@@ -23,7 +23,7 @@ set(AVRSIZE  avr-size)
 set(AVRDUDE  avrdude)
 
 # clang-tidy
-set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+#set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 
 # Sets the compiler
 # Needs to come before the project function
@@ -36,7 +36,8 @@ project (pb171 C CXX ASM)
 
 # Important project paths
 set(BASE_PATH    "${${PROJECT_NAME}_SOURCE_DIR}")
-set(INC_PATH     "${BASE_PATH}/include")
+set(INC_PATH     "${BASE_PATH}/include"
+                 "/usr/avr/include")
 set(SRC_PATH     "${BASE_PATH}/src")
 set(LIB_DIR_PATH "${BASE_PATH}/lib")
 
@@ -80,7 +81,7 @@ set(CXXWARN   "-Wall -Wextra -Wshadow -Wold-style-cast -Wunused")
 set(CXXSTANDARD "-std=c++20")
 
 set(CFLAGS   "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CWARN} ${CSTANDARD} ${CTUNING}")
-set(CXXFLAGS "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CXXWARN} ${CXXLIBRARY} ${CTUNING}")
+set(CXXFLAGS "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CXXWARN} ${CXXLIBRARY} ${CTUNING} ${CXXSTANDARD}")
 
 set(CMAKE_C_FLAGS   "${CFLAGS}")
 set(CMAKE_CXX_FLAGS "${CXXFLAGS}")
