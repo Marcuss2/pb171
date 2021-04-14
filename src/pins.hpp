@@ -72,6 +72,10 @@ constexpr uintptr_t MCUCR = 0x55;
 
 constexpr InternalVariable PUD = InternalVariable(MCUCR, 4);
 
+inline void NOP() {
+    __asm__ __volatile__("nop");
+}
+
 class DigitalPin {
     const uintptr_t PIN_MODE_ADDR;
     const uintptr_t PIN_OUTPUT_ADDR;
@@ -98,15 +102,19 @@ class DigitalPin {
     inline void setInputMode() const {
         if (!_isPullUpEnabled()) {
             digitalWrite(false);
+            NOP();
         }
         setBit(PIN_MODE_ADDR, PinMode::InputMode, PIN_POS);
+        NOP();
     }
     
     inline void setOutputMode() const {
         if (!_isPullUpEnabled()) {
             digitalWrite(false);
+            NOP();
         }
         setBit(PIN_MODE_ADDR, PinMode::OutputMode, PIN_POS);
+        NOP();
     }
 };
 
