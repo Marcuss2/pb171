@@ -1,60 +1,9 @@
 #pragma once
+
+#include <stdint.h>
 #include "concepts.hpp"
-
-using uint8_t = unsigned char;
-using uint16_t = unsigned int;
-using uint32_t = unsigned long int;
-using uintptr_t = uint16_t;
-using vol_ptr = volatile uint8_t*;
-
-uint32_t bit(unsigned_integral auto n) {
-    return 1u << n;
-}
-
-template<integral T>
-T bitClear(T x, unsigned_integral auto n) {
-    return x & ~(bit(n));
-}
-
-bool bitRead(integral auto x, unsigned_integral auto n) {
-    return x & bit(n);
-}
-
-template<integral T>
-T bitSet(T x, unsigned_integral auto n) {
-    return x | bit(n);
-}
-
-template<integral T>
-T bitWrite(T x, unsigned_integral auto n, bool b) {
-    x = bitClear(x, n);
-    if (b) {
-        x = bitSet(x, n);
-    }
-    return x;
-}
-
-uint8_t lowByte(integral auto x) {
-    const uint8_t MASK = 0xff;
-    return x & MASK;
-}
-
-uint8_t highByte(integral auto x) {
-    x = x >> 8;
-    return lowByte(x);
-}
-
-void setBit(uintptr_t addr, bool val, uint8_t pos) {
-    vol_ptr ptr = reinterpret_cast<vol_ptr>(addr);
-    uint8_t temp = *ptr;
-    *ptr = bitWrite(temp, pos, val);
-}
-
-bool readBit(uintptr_t addr, uint8_t pos) {
-    vol_ptr ptr = reinterpret_cast<vol_ptr>(addr);
-    uint8_t temp = *ptr;
-    return temp & (bit(pos));
-}
+#include "types.hpp"
+#include "bitops.hpp"
 
 class InternalVariable {
     const uintptr_t ADDR;
@@ -72,9 +21,14 @@ constexpr uintptr_t MCUCR = 0x55;
 
 constexpr InternalVariable PUD = InternalVariable(MCUCR, 4);
 
-inline void NOP() {
+inline void nop() {
     __asm__ __volatile__("nop");
 }
+
+enum {
+    INPUT = 0,
+    OUTPUT = 1,
+};
 
 class DigitalPin {
     const uintptr_t PIN_MODE_ADDR;
@@ -82,10 +36,7 @@ class DigitalPin {
     const uintptr_t PIN_INPUT_ADDR;
     const uint8_t PIN_POS;
     
-    enum PinMode {
-        InputMode = 0,
-        OutputMode = 1,
-    };
+    
     
     bool _isPullUpEnabled() const { return !PUD.read(); }
 
@@ -102,21 +53,42 @@ class DigitalPin {
     inline void setInputMode() const {
         if (!_isPullUpEnabled()) {
             digitalWrite(false);
-            NOP();
+            nop();
         }
-        setBit(PIN_MODE_ADDR, PinMode::InputMode, PIN_POS);
-        NOP();
+        setBit(PIN_MODE_ADDR, INPUT, PIN_POS);
+        nop();
     }
     
     inline void setOutputMode() const {
         if (!_isPullUpEnabled()) {
             digitalWrite(false);
-            NOP();
+            nop();
         }
-        setBit(PIN_MODE_ADDR, PinMode::OutputMode, PIN_POS);
-        NOP();
+        setBit(PIN_MODE_ADDR, OUTPUT, PIN_POS);
+        nop();
     }
 };
+
+void pinMode(const io_digital_pin auto& pin, bool mode) {
+    if (mode == INPUT) {
+        pin.setInputMode();
+    } else {
+        pin.setOutputMode();
+    }
+}
+
+enum {
+    LOW = 0,
+    HIGH = 1,
+};
+
+void digitalWrite(const digital_writeable auto& pin, bool val) {
+    pin.digitalWrite(val);
+}
+
+bool digitalRead(const digital_readable auto& pin) {
+    return pin.digitalRead();
+}
 
 constexpr uintptr_t PORTB = 0x25;
 constexpr uintptr_t DDRB = 0x24;
