@@ -38,7 +38,7 @@ concept digital_readable = requires(const T& t) {
 };
 
 template <typename T>
-concept io_digital_pin = digital_writeable<T>&& digital_readable<T>&& requires(T& t) {
+concept io_digital_pin = digital_writeable<T>&& digital_readable<T>&& requires(const T& t) {
     {t.setInputMode()};
     {t.setOutputMode()};
 };

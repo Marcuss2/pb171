@@ -37,7 +37,8 @@ project (pb171 C CXX ASM)
 # Important project paths
 set(BASE_PATH    "${${PROJECT_NAME}_SOURCE_DIR}")
 set(INC_PATH     "${BASE_PATH}/include"
-                 "/usr/avr/include")
+                 "/usr/avr/include"
+                 "/usr/include/simavr")
 set(SRC_PATH     "${BASE_PATH}/src")
 set(LIB_DIR_PATH "${BASE_PATH}/lib")
 
@@ -72,16 +73,17 @@ endforeach()
 # Compiler flags
 set(CSTANDARD "-std=gnu99")
 set(CDEBUG    "-g -ggdb")
-set(CWARN     "-Wall -Wstrict-prototypes -Wl,--gc-sections -Wl,--relax")
+set(CWARN     "-Wall -Wstrict-prototypes -Wl,--relax")
 set(CTUNING   "-funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -ffunction-sections -fdata-sections")
 set(COPT      "-Os -lprintf_flt")
+set(CTRACE    "-Wl,--undefined=_mmcu,--section-start=.mmcu=0x910000")
 set(CMCU      "-mmcu=${MCU}")
 set(CDEFS     "-DF_CPU=${F_CPU} -DBAUD=${BAUD}")
 set(CXXWARN   "-Wall -Wextra -Wshadow -Wold-style-cast -Wunused")
 set(CXXSTANDARD "-std=c++20")
 
-set(CFLAGS   "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CWARN} ${CSTANDARD} ${CTUNING}")
-set(CXXFLAGS "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CXXWARN} ${CXXLIBRARY} ${CTUNING} ${CXXSTANDARD}")
+set(CFLAGS   "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CWARN} ${CSTANDARD} ${CTUNING} ${CTRACE}")
+set(CXXFLAGS "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CXXWARN} ${CXXLIBRARY} ${CTUNING} ${CXXSTANDARD} ${CTRACE}")
 
 set(CMAKE_C_FLAGS   "${CFLAGS}")
 set(CMAKE_CXX_FLAGS "${CXXFLAGS}")
@@ -94,7 +96,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}.el
 
 # Compiling targets
 add_custom_target(strip ALL     ${AVRSTRIP} "${PROJECT_NAME}.elf" DEPENDS ${PROJECT_NAME})
-add_custom_target(hex   ALL     ${OBJCOPY} -R .eeprom -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.hex" DEPENDS strip)
+add_custom_target(hex   ALL     ${OBJCOPY} -R .eeprom -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.hex" DEPENDS ${PROJECT_NAME})
 add_custom_target(eeprom        ${OBJCOPY} -j .eeprom --change-section-lma .eeprom=0 -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.eeprom" DEPENDS strip)
 
 add_custom_target(flash ${AVRDUDE} -c ${PROG_TYPE} -p ${MCU} -P ${SERIAL} -U flash:w:${PROJECT_NAME}.hex DEPENDS hex)
