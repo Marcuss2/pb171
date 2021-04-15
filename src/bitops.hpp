@@ -52,3 +52,17 @@ bool readBit(uintptr_t addr, uint8_t pos) {
     uint8_t temp = *ptr;
     return temp & (bit(pos));
 }
+
+void setByte(uintptr_t addr, uint8_t val) {
+    vol_ptr ptr = reinterpret_cast<vol_ptr>(addr);
+    *ptr = val;
+}
+
+uint8_t readByte(uintptr_t addr) {
+    vol_ptr ptr = reinterpret_cast<vol_ptr>(addr);
+    return *ptr;
+}
+
+uint16_t readShort(uintptr_t addr) {
+    return readByte(addr) | (readByte(addr + 1) << 8);
+}
