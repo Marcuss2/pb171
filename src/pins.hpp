@@ -6,6 +6,8 @@
 #include "concepts.hpp"
 #include "types.hpp"
 
+namespace hal {
+
 class InternalVariable {
     const uintptr_t ADDR;
     const uint8_t POS;
@@ -108,7 +110,9 @@ class PWMPin : public DigitalPin {
             // Non-inverting mode
             const auto COMxA1 = 7;
             setBit(COUNTER_CTRL_ADDR, true, COMxA1);
-            // Set the prescaler from disabled to Clock / 8
+            // Set the prescaler from disabled to Clock / 64
+            const auto CSx0 = 0;
+            setBit(PRESCALE_ADDR, true, CSx0);
             const auto CSx1 = 1;
             setBit(PRESCALE_ADDR, true, CSx1);
         }
@@ -154,54 +158,56 @@ public:
 constexpr uintptr_t PORTB = 0x25;
 constexpr uintptr_t DDRB = 0x24;
 constexpr uintptr_t PINB = 0x23;
-constexpr auto PB0 = DigitalPin(DDRB, PORTB, PINB, 0);
-constexpr auto PB1 = DigitalPin(DDRB, PORTB, PINB, 1);
-constexpr auto PB2 = DigitalPin(DDRB, PORTB, PINB, 2);
+constexpr auto CPB0 = DigitalPin(DDRB, PORTB, PINB, 0);
+constexpr auto CPB1 = DigitalPin(DDRB, PORTB, PINB, 1);
+constexpr auto CPB2 = DigitalPin(DDRB, PORTB, PINB, 2);
 constexpr uintptr_t OCR2A = 0xB3;
 constexpr uintptr_t TCCR2A = 0xB0;
 constexpr uintptr_t TCCR2B = 0xB1;
-constexpr auto PB3 = PWMPin(DDRB, PORTB, PINB, 3, OCR2A, TCCR2A, TCCR2B);
-constexpr auto PB4 = DigitalPin(DDRB, PORTB, PINB, 4);
-constexpr auto PB5 = DigitalPin(DDRB, PORTB, PINB, 5);
-constexpr auto PB6 = DigitalPin(DDRB, PORTB, PINB, 6);
-constexpr auto PB7 = DigitalPin(DDRB, PORTB, PINB, 7);
+constexpr auto CPB3 = PWMPin(DDRB, PORTB, PINB, 3, OCR2A, TCCR2A, TCCR2B);
+constexpr auto CPB4 = DigitalPin(DDRB, PORTB, PINB, 4);
+constexpr auto CPB5 = DigitalPin(DDRB, PORTB, PINB, 5);
+constexpr auto CPB6 = DigitalPin(DDRB, PORTB, PINB, 6);
+constexpr auto CPB7 = DigitalPin(DDRB, PORTB, PINB, 7);
 
 constexpr uintptr_t PORTC = 0x28;
 constexpr uintptr_t DDRC = 0x27;
 constexpr uintptr_t PINC = 0x26;
-constexpr auto PC0 = DigitalPin(DDRC, PORTC, PINC, 0);
-constexpr auto PC1 = DigitalPin(DDRC, PORTC, PINC, 1);
-constexpr auto PC2 = DigitalPin(DDRC, PORTC, PINC, 2);
-constexpr auto PC3 = DigitalPin(DDRC, PORTC, PINC, 3);
-constexpr auto PC4 = DigitalPin(DDRC, PORTC, PINC, 4);
-constexpr auto PC5 = DigitalPin(DDRC, PORTC, PINC, 5);
-constexpr auto PC6 = DigitalPin(DDRC, PORTC, PINC, 6);
+constexpr auto CPC0 = DigitalPin(DDRC, PORTC, PINC, 0);
+constexpr auto CPC1 = DigitalPin(DDRC, PORTC, PINC, 1);
+constexpr auto CPC2 = DigitalPin(DDRC, PORTC, PINC, 2);
+constexpr auto CPC3 = DigitalPin(DDRC, PORTC, PINC, 3);
+constexpr auto CPC4 = DigitalPin(DDRC, PORTC, PINC, 4);
+constexpr auto CPC5 = DigitalPin(DDRC, PORTC, PINC, 5);
+constexpr auto CPC6 = DigitalPin(DDRC, PORTC, PINC, 6);
 
 constexpr uintptr_t PORTD = 0x2B;
 constexpr uintptr_t DDRD = 0x2A;
 constexpr uintptr_t PIND = 0x29;
-constexpr auto PD0 = DigitalPin(DDRD, PORTD, PIND, 0);
-constexpr auto PD1 = DigitalPin(DDRD, PORTD, PIND, 1);
-constexpr auto PD2 = DigitalPin(DDRD, PORTD, PIND, 2);
+constexpr auto CPD0 = DigitalPin(DDRD, PORTD, PIND, 0);
+constexpr auto CPD1 = DigitalPin(DDRD, PORTD, PIND, 1);
+constexpr auto CPD2 = DigitalPin(DDRD, PORTD, PIND, 2);
 constexpr uintptr_t OCR2B = 0xB4;
-constexpr auto PD3 = PWMPin(DDRD, PORTD, PIND, 3, OCR2B, TCCR2A, TCCR2B);
-constexpr auto PD4 = DigitalPin(DDRD, PORTD, PIND, 4);
+constexpr auto CPD3 = PWMPin(DDRD, PORTD, PIND, 3, OCR2B, TCCR2A, TCCR2B);
+constexpr auto CPD4 = DigitalPin(DDRD, PORTD, PIND, 4);
 constexpr uintptr_t OCR0B = 0x48;
 constexpr uintptr_t TCCR0A = 0x44;
 constexpr uintptr_t TCCR0B = 0x45;
-constexpr auto PD5 = PWMPin(DDRD, PORTD, PIND, 5, OCR0B, TCCR0A, TCCR0B);
+constexpr auto CPD5 = PWMPin(DDRD, PORTD, PIND, 5, OCR0B, TCCR0A, TCCR0B);
 constexpr uintptr_t OCR0A = 0x47;
-constexpr auto PD6 = PWMPin(DDRD, PORTD, PIND, 6, OCR0A, TCCR0A, TCCR0B);
-constexpr auto PD7 = DigitalPin(DDRD, PORTD, PIND, 7);
+constexpr auto CPD6 = PWMPin(DDRD, PORTD, PIND, 6, OCR0A, TCCR0A, TCCR0B);
+constexpr auto CPD7 = DigitalPin(DDRD, PORTD, PIND, 7);
 
-constexpr auto ADC0 = AnalogPin(0b0000);
-constexpr auto ADC1 = AnalogPin(0b0001);
-constexpr auto ADC2 = AnalogPin(0b0010);
-constexpr auto ADC3 = AnalogPin(0b0011);
-constexpr auto ADC4 = AnalogPin(0b0100);
-constexpr auto ADC5 = AnalogPin(0b0101);
-constexpr auto ADC6 = AnalogPin(0b0110);
-constexpr auto ADC7 = AnalogPin(0b0111);
-constexpr auto ADC8 = AnalogPin(0b1000);
-constexpr auto VBG  = AnalogPin(0b1110);
-constexpr auto VGND = AnalogPin(0b1111);
+constexpr auto CADC0 = AnalogPin(0b0000);
+constexpr auto CADC1 = AnalogPin(0b0001);
+constexpr auto CADC2 = AnalogPin(0b0010);
+constexpr auto CADC3 = AnalogPin(0b0011);
+constexpr auto CADC4 = AnalogPin(0b0100);
+constexpr auto CADC5 = AnalogPin(0b0101);
+constexpr auto CADC6 = AnalogPin(0b0110);
+constexpr auto CADC7 = AnalogPin(0b0111);
+constexpr auto CADC8 = AnalogPin(0b1000);
+constexpr auto CVBG  = AnalogPin(0b1110);
+constexpr auto CVGND = AnalogPin(0b1111);
+
+}

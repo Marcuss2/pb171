@@ -38,7 +38,7 @@ project (pb171 C CXX ASM)
 set(BASE_PATH    "${${PROJECT_NAME}_SOURCE_DIR}")
 set(INC_PATH     "${BASE_PATH}/include"
                  "/usr/avr/include"
-                 "/usr/include/simavr")
+                 "/usr/include/simavr/avr")
 set(SRC_PATH     "${BASE_PATH}/src")
 set(LIB_DIR_PATH "${BASE_PATH}/lib")
 
@@ -82,8 +82,8 @@ set(CDEFS     "-DF_CPU=${F_CPU} -DBAUD=${BAUD}")
 set(CXXWARN   "-Wall -Wextra -Wshadow -Wold-style-cast -Wunused")
 set(CXXSTANDARD "-std=c++20")
 
-set(CFLAGS   "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CWARN} ${CSTANDARD} ${CTUNING}")
-set(CXXFLAGS "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CXXWARN} ${CXXLIBRARY} ${CTUNING} ${CXXSTANDARD}")
+set(CFLAGS   "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CWARN} ${CSTANDARD} ${CTUNING} ${CTRACE}")
+set(CXXFLAGS "${CMCU} ${CDEBUG} ${CDEFS} ${COPT} ${CXXWARN} ${CXXLIBRARY} ${CTUNING} ${CXXSTANDARD} ${CTRACE}")
 
 set(CMAKE_C_FLAGS   "${CFLAGS}")
 set(CMAKE_CXX_FLAGS "${CXXFLAGS}")

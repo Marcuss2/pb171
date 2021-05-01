@@ -1,28 +1,27 @@
 #pragma once
 
 #include <stdint.h>
+
 #include "concepts.hpp"
 #include "types.hpp"
 
-uint32_t bit(unsigned_integral auto n) {
-    return 1u << n;
-}
+namespace hal {
 
-template<integral T>
+uint32_t bit(unsigned_integral auto n) { return 1u << n; }
+
+template <integral T>
 T bitClear(T x, unsigned_integral auto n) {
     return x & ~(bit(n));
 }
 
-bool bitRead(integral auto x, unsigned_integral auto n) {
-    return x & bit(n);
-}
+bool bitRead(integral auto x, unsigned_integral auto n) { return x & bit(n); }
 
-template<integral T>
+template <integral T>
 T bitSet(T x, unsigned_integral auto n) {
     return x | bit(n);
 }
 
-template<integral T>
+template <integral T>
 T bitWrite(T x, unsigned_integral auto n, bool b) {
     x = bitClear(x, n);
     if (b) {
@@ -63,6 +62,6 @@ uint8_t readByte(uintptr_t addr) {
     return *ptr;
 }
 
-uint16_t readShort(uintptr_t addr) {
-    return readByte(addr) | (readByte(addr + 1) << 8);
-}
+uint16_t readShort(uintptr_t addr) { return readByte(addr) | (readByte(addr + 1) << 8); }
+
+}  // namespace hal
