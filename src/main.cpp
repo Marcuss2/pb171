@@ -54,5 +54,5 @@ void realmode() {
 }
 
 int main() {
-    tracemode();
+    realmode();
 }

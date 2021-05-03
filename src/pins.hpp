@@ -122,6 +122,11 @@ class PWMPin : public DigitalPin {
         }
 };
 
+void analogWrite(const pwm_pin auto& pin, uint8_t val) {
+    pin.setupPWM();
+    pin.setPWM(val);
+}
+
 template<uint8_t PRESCALE = 0b100>
 class AnalogPin {
     const uint8_t MASK;
@@ -154,6 +159,11 @@ public:
         return readShort(ADCSHORT);
     }
 };
+
+uint16_t analogRead(const analog_readable auto& pin) {
+    pin.setupAnalogRead();
+    return pin.analogRead();
+}
 
 constexpr uintptr_t PORTB = 0x25;
 constexpr uintptr_t DDRB = 0x24;
