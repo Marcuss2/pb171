@@ -46,10 +46,18 @@ void tracemode() {
 
 void realmode() {
     using namespace hal;
-    setupTimer();
+    //setupTimer();
+    volatile double a = 100000.0;
     CPD6.setOutputMode();
+    bool val = false;
     while (true) {
-        CPD6.setPWM(millis() % 256);
+        val = !val;
+        // 10000 - nothing
+        // 100000 - fast blinking
+        for (uint32_t i = 0; i < 2000000; i++) {
+            CPD6.digitalWrite(val);
+            a = a / 2.005;
+        }
     }
 }
 
