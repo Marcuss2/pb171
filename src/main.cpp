@@ -1,5 +1,6 @@
 #include "pins.hpp"
 #include "timers.hpp"
+#include "uart.hpp"
 
 void tracemode() {
     using namespace hal;
