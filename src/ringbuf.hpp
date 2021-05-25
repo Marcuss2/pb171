@@ -10,24 +10,23 @@ class RingBuffer {
     volatile uint8_t tail;
     
 public:
-    bool empty() const { return head == tail; }
+
     
     void remove() {
         if (empty())
             return;
-        tail = tail + 1 % BUFSIZE;
+        tail = (tail + 1) % BUFSIZE;
     }
     
     uint8_t peek() const {
-        assert(!empty());
         return buffer[tail];
     }
     
     void add(uint8_t val) {
         buffer[head] = val;
-        head = head + 1 % BUFSIZE;
+        head = (head + 1) % BUFSIZE;
         if (head == tail)
-            tail = tail + 1 % BUFSIZE;
+            tail = (tail + 1) % BUFSIZE;
     }
     
     uint8_t count() const {
@@ -37,5 +36,7 @@ public:
     uint8_t empty_capacity() const {
         return BUFSIZE - count();
     }
+    
+    bool empty() const { return count() == 0; }
 };
 }
