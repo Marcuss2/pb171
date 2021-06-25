@@ -34,7 +34,7 @@ public:
     }
     
     uint8_t empty_capacity() const {
-        return BUFSIZE - count();
+        return BUFSIZE - count() - 1;
     }
     
     bool empty() const { return count() == 0; }

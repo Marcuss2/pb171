@@ -1,12 +1,22 @@
 #include "pins.hpp"
 #include "timers.hpp"
 #include "uart.hpp"
+#include "stopwatch.hpp"
 
 void tracemode() {
     using namespace hal;
-    Serial.begin();
-    Serial.write("Hello world!\r\n");
-    Serial.println(634);
+    auto watch = StopWatch::StopWatch(StopWatch::Resolution::SECONDS);
+    watch.start();
+    Serial.begin(38400);
+    Serial.println("Hello World!");
+    while (true) {
+        auto mil = millis();
+        auto el = watch.elapsed();
+        Serial.print(static_cast<long>(mil));
+        Serial.write(" ");
+        Serial.print(static_cast<long>(el));
+        Serial.println("");
+    }
 }
 
 void realmode() {
@@ -26,11 +36,22 @@ void realmode() {
     }
 }
 
-int main() {
-    tracemode();
+void setup() {
+    using namespace hal;
+    // Your setup code here
     
-    volatile bool a = true;
+}
+
+void loop() {
+    using namespace hal;
+    // Your loop code here
+}
+
+int main() {
+    hal::setupTimer();
+    tracemode();
+    setup();
     while (true) {
-        a = !a;
+        loop();
     }
 }

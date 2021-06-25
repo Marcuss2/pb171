@@ -26,7 +26,7 @@ enum Format {
 
 constexpr auto CUDR0 = 0xC6;
 
-template<uintptr_t BUFSIZE>
+template<uintptr_t BUFSIZE = 64>
 class SerialClass {
 
     
@@ -76,16 +76,50 @@ public:
     static constexpr auto CUDRIEn = 5;
     static constexpr uintptr_t CUCSR0B = 0xC1;
     
-    void begin() {
+    // Baud rate setting roughly matches 1 000 000 / baud rate, but not exactly :(
+    uint16_t baudRateToSetting(uint32_t baud_rate) {
+        switch (baud_rate) {
+            case 4800:
+                return 207;
+            case 9600:
+                return 103;
+            case 14400:
+                return 68;
+            case 19200:
+                return 51;
+            case 28800:
+                return 34;
+            case 38400:
+                return 25;
+            case 57600:
+                return 16;
+            case 76800:
+                return 12;
+            case 115200:
+                return 8;
+            case 230400:
+            case 250000:
+                return 3;
+            case 500000:
+                return 1;
+            case 1000000:
+                return 0;
+            default:
+                // Baud rate 2400 by default
+                return 416;
+        }
+    }
+    
+    void begin(uint32_t baud_rate = 2400) {
         cli();
         {
             CPD0.setInputMode();
             CPD1.setOutputMode();
-            // Baud rate 38.4k bps
+            auto baud_rate_setting = baudRateToSetting(baud_rate);
             constexpr uintptr_t CUBRR0H = 0xC5;
-            setByte(CUBRR0H, 416 >> 8);
+            setByte(CUBRR0H, baud_rate_setting >> 8);
             constexpr uintptr_t CUBRR0L = 0xC4;
-            setByte(CUBRR0L, 416 & 0xFF);
+            setByte(CUBRR0L, baud_rate_setting & 0xFF);
         
             // Default usart mode
              constexpr auto CUCSR0C = 0xC2;
@@ -194,7 +228,7 @@ public:
     
     uintptr_t print(long val, Format format = Format::DEC) {
         // Enough for 32bit signed minimum including null terminator
-        char buf[33];
+        char buf[8 * sizeof(long) + 1];
         
         const char* str = ltoa(val, buf, format);
         
