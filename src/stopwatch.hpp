@@ -13,10 +13,6 @@ enum Resolution {
 
 template <unsigned_integral T = uint32_t>
 class StopWatch {
-public:
-    
-    
-private:
     T _time = 0;
     uint32_t _last_measure;
     Resolution _resolution;
@@ -48,7 +44,7 @@ public:
     
     /*
      * Updates internal timer to prevent potential overflows
-     * Call at least once per 70 minutes for millis and 50 days for micros/seconds
+     * Call at least once per 70 minutes for micros and 50 days for millis/seconds
      */
     void poll() {
         if (!_running) return;
